@@ -72,10 +72,10 @@ class Episode_Guide(object):
 
 				current_episode = len(episode_links)-episode_counter
 				description = a.findNext('div', attrs={"class":"description"})
+				print "This is a test to see what encoding is missing things up. Please delete these print commands when it's resolved."
 				print description.contents
 				print "Here's the change"
-				print [str(a).decode("utf-8") for a in description.contents]
-				description = ''.join(t for t in description.contents)
+				description = ''.join(str(a).decode("utf-8") for a in description.contents)
 				print description
 				description = ''.join(re.sub(r'<.*?>', '', description))
 				description = ''.join(re.sub("(&nbsp;)|(moreless)|(\n)", ' ', description))

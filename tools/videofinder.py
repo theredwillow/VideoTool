@@ -1,16 +1,16 @@
 class Video_Finder(object):
 
-	def __init__(self, provided_title=""):   #Sets up the show and hostsite
+	def __init__(self, provided_title="", provided_host=""):   #Sets up the show and hostsite
 		check_internet()
 		self.provided_title=provided_title
 		if self.provided_title == "":
 			self.choose_show()
-		self.choose_hostsite()
+		self.choose_hostsite(provided_host)
 		assert self.provided_title != "", "Video_Finder objects need a show name to find a program."
 		self.choose_program()
 
 	def watch(self, *args, **kwargs):   #Opens the url of a video
-		assert hasattr(self, program_url), "The watch function needs a URL from a host site."
+		assert hasattr(self, "program_url"), "The watch function needs a URL from a host site."
 		if self.scraper.tv_or_movie(self.program_url) is "tv":
 			self.collect_episodes()
 
@@ -33,6 +33,8 @@ class Video_Finder(object):
 				"""
 			if not hasattr(self, "season_selected"):
 				self.choose_season()
+
+			self.number_of_episodes = max(b for (a,b,c) in self.episodes if a == self.season_selected)
 
 			if kwargs:
 				if "episode" in kwargs:
@@ -60,7 +62,7 @@ class Video_Finder(object):
 		self.collect_sources()
 		self.choose_source()
 
-	def choose_hostsite(self):   #Helps the user choose a hostsite
+	def choose_hostsite(self, provided_host=""):   #Helps the user choose a hostsite
 		possible_hostsites = []
 		modules = {}
 		scraper = {}
@@ -72,18 +74,25 @@ class Video_Finder(object):
 				modules[name] = load_source(name, path)
 			scraper[name] = modules[name].host_scraper(possible_hostsites)
 
-		print "Do you have a prefered hostsite?"
-		for counter, host in enumerate(possible_hostsites):
-			print str(counter+1)+". "+host[0]
-		chosen_hostsite = raw_input()
-		if chosen_hostsite.lower() == "no":
-			chosen_hostsite = possible_hostsites[0][1]
+		if provided_host in scraper:
+			chosen_hostsite = provided_host
 		else:
-			try:
-				chosen_hostsite = possible_hostsites[int(chosen_hostsite)-1][1]
-			except:
-				print "You haven't provided a number choice or the word, no. So I don't know what to do..."
-				raise SystemExit(0)
+			provided_host = ""
+
+		if provided_host == "":
+			print "Do you have a prefered hostsite?"
+			for counter, host in enumerate(possible_hostsites):
+				print str(counter+1)+". "+host[0]
+			chosen_hostsite = raw_input()
+			if chosen_hostsite.lower() == "no":
+				chosen_hostsite = possible_hostsites[0][1]
+			else:
+				try:
+					chosen_hostsite = possible_hostsites[int(chosen_hostsite)-1][1]
+				except:
+					print "You haven't provided a number choice or the word, no. So I don't know what to do..."
+					raise SystemExit(0)
+		self.chosen_hostsite = chosen_hostsite
 		self.scraper = scraper[chosen_hostsite]
 
 	def choose_show(self):   #Helps the user choose a show
@@ -92,7 +101,7 @@ class Video_Finder(object):
 
 	def choose_program(self):   #Scrapes the URL of a program from a video host indexing site
 		self.scraper.program_search_vars()
-		soup = scrape_site(self.scraper.search_url + self.provided_title)
+		soup = scrape_site(self.scraper.search_url + self.provided_title.replace(" ", "%20"))
 		assert soup != "Broken Link", "Something may be wrong with the host site."
 		possible_options = soup.find_all(name = self.scraper.search_name, attrs = self.scraper.search_attrs)
 		if not possible_options:
@@ -100,7 +109,7 @@ class Video_Finder(object):
 			print ""
 			selection = ""
 		elif len(possible_options) > 1:
-			print "It looks like you have a few options. Take your pick!"
+			print "It looks like you have a few options for " + self.provided_title.title() + ". Take your pick!"
 			print ""
 			for counter, program_name in enumerate(possible_options):
 				counter = counter + 1
@@ -128,7 +137,6 @@ class Video_Finder(object):
 	def choose_season(self):   #Helps the user choose which season they want to watch
 		print "Which season would you like to watch? There are %s." % self.number_of_seasons
 		self.season_selected = input()
-		self.number_of_episodes = max(b for (a,b,c) in self.episodes if a == self.season_selected)
 
 	def choose_episode(self):   #Helps the user choose which episode they want to watch
 		print "Which episode would you like to watch? There are %s in this season." % self.number_of_episodes

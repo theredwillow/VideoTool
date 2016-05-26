@@ -8,7 +8,7 @@ from selenium import webdriver
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement, Comment, XML
 from xml.dom import minidom
-from subprocess import check_output
+import subprocess
 
 filepath = dirname(abspath(__file__))
 error_words = ["404", "inconvenience", " not found", "expired", " delete", "t comply", "t exist", "remove", "error", "t be found"] #must be in lowercase
@@ -71,10 +71,11 @@ def character_handler(char_solve):
 
 execfile(filepath+"/tools/videofinder.py")
 execfile(filepath+"/tools/episode_guide.py")
+execfile(filepath+"/tools/watch_channel.py")
 
-simp = Episode_Guide("phineas and ferb")
-simp.download(save="TRUE")
+#simp = Episode_Guide("phineas and ferb")
+#simp.download(save="TRUE")
 #simp.decorate()
 
-
-#Video_Finder().watch()
+channel = watch_channel(programs=["How I Met Your Mother"], host="LMWT")
+channel.launch()

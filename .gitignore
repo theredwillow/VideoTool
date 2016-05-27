@@ -1,3 +1,12 @@
+#Video files
+*.mkv
+
+#XML files
+*.xml
+
+#Python compiled files
+*.pyc
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

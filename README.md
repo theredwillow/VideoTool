@@ -1,0 +1,2 @@
+Set-up:
+Sometimes the webscrapers need to read javascript to find your link. To fix this, this script uses a headless browser. Download an exe like phantomjs and put the static path to it in the path_to_webbrowser variable in tools/commontools.py

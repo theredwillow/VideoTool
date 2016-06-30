@@ -1,8 +1,14 @@
+#Work enivornment
+*test*.py
+
 #Video files
 *.mkv
 
 #XML files
 *.xml
+
+#Log files
+*.log
 
 #Python compiled files
 *.pyc

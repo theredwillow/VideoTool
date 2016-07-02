@@ -1,3 +1,5 @@
+#!/usr/bin/python3 -i
+
 from tools.core import *
 from tools.videofinder import *
 from tools.episode_guide import *
@@ -5,7 +7,7 @@ from tools.watch_channel import *
 
 path_to_webbrowser = 'C:\Python35-32\Tools\webbrowsers\phantomjs.exe'
 error_words = ["404", "inconvenience", " not found", "expired", " delete", "t comply",
-				"t exist", "remove", "error", "t be found"]  # Must be in lowercase
+               "t exist", "remove", "error", "t be found"]  # Must be in lowercase
 
 print(Episode_Guide("coupling").random_episode())
 
